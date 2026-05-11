@@ -67,6 +67,9 @@ class PatientSerializer(serializers.ModelSerializer):
     user_details = UserBasicSerializer(source='user', read_only=True)
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    email = serializers.EmailField(source='user.email', read_only=True)
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
     allergies = AllergySerializer(many=True, read_only=True)
     chronic_conditions = ChronicConditionSerializer(many=True, read_only=True)
     medications = MedicationSerializer(many=True, read_only=True)
@@ -75,7 +78,10 @@ class PatientSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Patient
-        fields = '__all__'
+        fields = ('id', 'first_name', 'last_name', 'full_name', 'age', 'email', 'user_details',
+                  'date_of_birth', 'gender', 'phone', 'address', 'emergency_contact', 
+                  'blood_type', 'created_at', 'updated_at', 'allergies', 'chronic_conditions',
+                  'medications', 'insurance', 'primary_care_physician')
         read_only_fields = ('created_at', 'updated_at', 'user')
     
     def get_full_name(self, obj):

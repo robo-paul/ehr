@@ -105,6 +105,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       badge: badgeCounts.messages  // Dynamic message count
     },
     {
+      path: '/admin/users',
+      icon: 'fas fa-users-cog',
+      label: 'User Management',
+      roles: ['master_admin']
+    },
+    {
       path: '/notifications',
       icon: 'fas fa-bell',
       label: 'Notifications',

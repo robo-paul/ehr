@@ -21,6 +21,7 @@ class User(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')], blank=True)
     is_verified = models.BooleanField(default=False)
+    work_id = models.CharField(max_length=50, blank=True, null=True)
        
     def save(self, *args, **kwargs):
         # Superusers and master admins are always verified
@@ -37,5 +38,5 @@ class User(AbstractUser):
         
         super().save(*args, **kwargs)
     
-    def __str__(self):
+    def __str__(self):       
         return self.username

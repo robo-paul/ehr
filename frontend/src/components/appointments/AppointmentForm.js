@@ -57,16 +57,18 @@ const AppointmentForm = () => {
     setLoadingProviders(true);
     try {
       const response = await api.get('/accounts/providers/');
-      setProviders(response.data);
+      let providersData = response.data;
+      
+      // Normalize to array
+      if (!Array.isArray(providersData)) {
+        if (providersData?.results) providersData = providersData.results;
+        else if (providersData?.data) providersData = providersData.data;
+        else providersData = [];
+      }
+      setProviders(providersData);
     } catch (error) {
       console.error('Error fetching providers:', error);
-      // Fallback data for development
-      setProviders([
-        { id: 1, first_name: 'John', last_name: 'Smith', specialization: 'Cardiology' },
-        { id: 2, first_name: 'Sarah', last_name: 'Johnson', specialization: 'Pediatrics' },
-        { id: 3, first_name: 'Michael', last_name: 'Brown', specialization: 'General Medicine' },
-        { id: 4, first_name: 'Emily', last_name: 'Davis', specialization: 'Dermatology' }
-      ]);
+      setProviders([]);
     } finally {
       setLoadingProviders(false);
     }
@@ -76,9 +78,31 @@ const AppointmentForm = () => {
     setLoadingPatients(true);
     try {
       const response = await api.get('/patients/patients/');
-      setPatients(response.data);
+      let patientsData = response.data;
+      
+      // Normalize to array - THIS IS THE KEY FIX
+      if (!Array.isArray(patientsData)) {
+        if (patientsData?.results) {
+          patientsData = patientsData.results;
+        } else if (patientsData?.data) {
+          patientsData = patientsData.data;
+        } else if (typeof patientsData === 'object' && patientsData !== null) {
+          // If it's an object with numeric keys, convert to array
+          const values = Object.values(patientsData);
+          if (values.length > 0 && values.some(v => typeof v === 'object')) {
+            patientsData = values;
+          } else {
+            patientsData = [];
+          }
+        } else {
+          patientsData = [];
+        }
+      }
+      
+      setPatients(patientsData);
     } catch (error) {
       console.error('Error fetching patients:', error);
+      setPatients([]);
     } finally {
       setLoadingPatients(false);
     }
@@ -150,7 +174,6 @@ const AppointmentForm = () => {
       const submitData = {
         ...formData,
         patient: isPatient ? currentUser?.patient_id : formData.patient,
-        // Ensure dates are in correct format
         patient_suggested_date: new Date(formData.patient_suggested_date).toISOString()
       };
 
@@ -183,6 +206,17 @@ const AppointmentForm = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     return now.toISOString().slice(0, 16);
+  };
+
+  const getPatientDisplayName = (patient) => {
+    // Try to get name from different possible structures
+    if (patient.user_details?.full_name) return patient.user_details.full_name;
+    if (patient.full_name) return patient.full_name;
+    if (patient.first_name && patient.last_name) return `${patient.first_name} ${patient.last_name}`;
+    if (patient.user_details?.first_name && patient.user_details?.last_name) {
+      return `${patient.user_details.first_name} ${patient.user_details.last_name}`;
+    }
+    return 'Unknown Patient';
   };
 
   if (loading) {
@@ -327,9 +361,9 @@ const AppointmentForm = () => {
                   disabled={loadingPatients}
                 >
                   <option value="">Choose a patient...</option>
-                  {patients.map(patient => (
+                  {Array.isArray(patients) && patients.map(patient => (
                     <option key={patient.id} value={patient.id}>
-                      {patient.first_name} {patient.last_name} {patient.date_of_birth ? `- DOB: ${new Date(patient.date_of_birth).toLocaleDateString()}` : ''}
+                      {getPatientDisplayName(patient)} {patient.date_of_birth ? `- DOB: ${new Date(patient.date_of_birth).toLocaleDateString()}` : ''}
                     </option>
                   ))}
                 </select>
@@ -351,7 +385,7 @@ const AppointmentForm = () => {
                 disabled={loadingProviders}
               >
                 <option value="">Choose a provider...</option>
-                {providers.map(provider => (
+                {Array.isArray(providers) && providers.map(provider => (
                   <option key={provider.id} value={provider.id}>
                     Dr. {provider.first_name} {provider.last_name} {provider.specialization && `- ${provider.specialization}`}
                   </option>
@@ -479,8 +513,7 @@ const AppointmentForm = () => {
             </div>
           </form>
         </div>
-
-        </div>
+      </div>
     </div>
   );
 };

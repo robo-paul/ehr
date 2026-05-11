@@ -1,6 +1,6 @@
 // frontend/src/pages/admin/AdminUsers.js
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import api from '../../services/api';
 import { authService } from '../../services/auth';
 
@@ -18,18 +18,26 @@ const AdminUsers = () => {
   const [stats, setStats] = useState(null);
   const currentUser = authService.getCurrentUser();
 
+  const isMasterAdmin = currentUser?.user_type === 'master_admin';
+
   useEffect(() => {
+    if (!isMasterAdmin) {
+      setError('Access denied. Master Admin privileges required.');
+      setLoading(false);
+      return;
+    }
     fetchUsers();
     fetchStats();
-  }, []);
+  }, [isMasterAdmin]);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
       const response = await api.get('/admin/users/');
       setUsers(response.data);
-    } catch (error) {
-      console.error('Error fetching users:', error);
+      setError('');
+    } catch (err) {
+      console.error('Error fetching users:', err);
       setError('Failed to load users');
     } finally {
       setLoading(false);
@@ -40,22 +48,24 @@ const AdminUsers = () => {
     try {
       const response = await api.get('/admin/user-stats/');
       setStats(response.data);
-    } catch (error) {
-      console.error('Error fetching stats:', error);
+    } catch (err) {
+      console.error('Error fetching stats:', err);
     }
   };
 
   const handleRoleUpdate = async (userId, newRole) => {
     setActionLoading(true);
     try {
-      await api.post(`/admin/users/${userId}/update-role/`, { user_type: newRole });
+      await api.post(`/admin/users/${userId}/update_role/`, { user_type: newRole });
       setSuccess('User role updated successfully!');
       fetchUsers();
       fetchStats();
       setShowRoleModal(false);
+      setSelectedUser(null);
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
-      setError(error.response?.data?.error || 'Error updating role');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error updating role');
+      setTimeout(() => setError(''), 3000);
     } finally {
       setActionLoading(false);
     }
@@ -69,9 +79,11 @@ const AdminUsers = () => {
       fetchUsers();
       fetchStats();
       setShowVerifyModal(false);
+      setSelectedUser(null);
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
+    } catch (err) {
       setError('Error verifying user');
+      setTimeout(() => setError(''), 3000);
     } finally {
       setActionLoading(false);
     }
@@ -93,8 +105,9 @@ const AdminUsers = () => {
       fetchUsers();
       fetchStats();
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
-      setError(error.response?.data?.error || `Error ${currentStatus ? 'deactivating' : 'reactivating'} user`);
+    } catch (err) {
+      setError(err.response?.data?.error || `Error ${currentStatus ? 'deactivating' : 'reactivating'} user`);
+      setTimeout(() => setError(''), 3000);
     } finally {
       setActionLoading(false);
     }
@@ -150,19 +163,29 @@ const AdminUsers = () => {
     { value: 'patient', label: 'Patient', color: 'gray' }
   ];
 
+  if (!isMasterAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+            <div className="bg-red-100 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+              <i className="fas fa-lock text-3xl text-red-600"></i>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h3>
+            <p className="text-gray-600">You don't have permission to access this page.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex items-center justify-center py-12">
-              <div className="flex items-center space-x-3">
-                <svg className="animate-spin h-8 w-8 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span className="text-lg text-gray-600">Loading users...</span>
-              </div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
             </div>
           </div>
         </div>
@@ -171,135 +194,104 @@ const AdminUsers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-purple-600 p-3 rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            User Management
-          </h2>
-          <p className="text-gray-600 text-lg">
-            Manage users, roles, and permissions across the system
-          </p>
-        </div>
+    <>
+      <Helmet>
+        <title>User Management | Admin | EHR System</title>
+      </Helmet>
 
-        {/* Success/Error Messages */}
-        {success && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-              </svg>
-              <span className="text-green-800 font-medium">{success}</span>
-            </div>
+      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+            <p className="text-gray-600 mt-2">Manage users, roles, and permissions across the system</p>
           </div>
-        )}
 
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
-              </svg>
-              <span className="text-red-800 font-medium">{error}</span>
+          {/* Success/Error Messages */}
+          {success && (
+            <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4">
+              <div className="flex items-center">
+                <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                <span className="text-green-800">{success}</span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4">
+              <div className="flex items-center">
+                <i className="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                <span className="text-red-800">{error}</span>
+              </div>
+            </div>
+          )}
 
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Total Users</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.total_users}</p>
+          {/* Stats Cards */}
+          {stats && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Total Users</p>
+                    <p className="text-3xl font-bold text-gray-900">{stats.total_users}</p>
+                  </div>
+                  <div className="bg-blue-100 p-3 rounded-full">
+                    <i className="fas fa-users text-blue-600"></i>
+                  </div>
                 </div>
-                <div className="bg-blue-100 p-3 rounded-lg">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
+              </div>
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Verified Users</p>
+                    <p className="text-3xl font-bold text-green-600">{stats.verified_users}</p>
+                  </div>
+                  <div className="bg-green-100 p-3 rounded-full">
+                    <i className="fas fa-check-circle text-green-600"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Pending Verification</p>
+                    <p className="text-3xl font-bold text-yellow-600">{stats.pending_verification || 0}</p>
+                  </div>
+                  <div className="bg-yellow-100 p-3 rounded-full">
+                    <i className="fas fa-clock text-yellow-600"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Active Users</p>
+                    <p className="text-3xl font-bold text-blue-600">{stats.active_users}</p>
+                  </div>
+                  <div className="bg-purple-100 p-3 rounded-full">
+                    <i className="fas fa-user-check text-purple-600"></i>
+                  </div>
                 </div>
               </div>
             </div>
+          )}
 
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Verified</p>
-                  <p className="text-3xl font-bold text-green-600">{stats.verified_users}</p>
-                </div>
-                <div className="bg-green-100 p-3 rounded-lg">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Pending</p>
-                  <p className="text-3xl font-bold text-yellow-600">{stats.pending_verification}</p>
-                </div>
-                <div className="bg-yellow-100 p-3 rounded-lg">
-                  <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Active</p>
-                  <p className="text-3xl font-bold text-blue-600">{stats.active_users}</p>
-                </div>
-                <div className="bg-blue-100 p-3 rounded-lg">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Filters and Search */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex-1">
-              <div className="relative">
+          {/* Filters */}
+          <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-200 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 <input
                   type="text"
                   placeholder="Search users by name, email, or work ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
-                <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
               </div>
-            </div>
-            <div className="flex space-x-3">
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
                 <option value="all">All Roles</option>
                 {roleOptions.map(role => (
@@ -308,186 +300,165 @@ const AdminUsers = () => {
               </select>
               <button
                 onClick={fetchUsers}
-                className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                <i className="fas fa-sync-alt mr-2"></i>
-                Refresh
+                <i className="fas fa-sync-alt mr-2"></i>Refresh
               </button>
             </div>
           </div>
-        </div>
 
-        {/* Users Table */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Work ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredUsers.map(user => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition-colors duration-200">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium ${
-                          user.user_type === 'master_admin' ? 'bg-purple-600' :
-                          user.user_type === 'admin' ? 'bg-red-600' :
-                          user.user_type === 'doctor' ? 'bg-blue-600' :
-                          user.user_type === 'nurse' ? 'bg-green-600' :
-                          user.user_type === 'pharmacist' ? 'bg-orange-600' :
-                          user.user_type === 'radiologist' ? 'bg-indigo-600' :
-                          user.user_type === 'labscientist' ? 'bg-yellow-600' :
-                          'bg-gray-600'
-                        }`}>
-                          {user.first_name?.charAt(0) || user.username?.charAt(0) || 'U'}
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {user.first_name} {user.last_name}
+          {/* Users Table */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Work ID</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredUsers.map(user => (
+                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+                            user.user_type === 'master_admin' ? 'bg-purple-600' :
+                            user.user_type === 'admin' ? 'bg-red-600' :
+                            user.user_type === 'doctor' ? 'bg-blue-600' :
+                            user.user_type === 'nurse' ? 'bg-green-600' :
+                            user.user_type === 'pharmacist' ? 'bg-orange-600' :
+                            user.user_type === 'radiologist' ? 'bg-indigo-600' :
+                            user.user_type === 'labscientist' ? 'bg-yellow-600' :
+                            'bg-gray-600'
+                          }`}>
+                            {user.first_name?.charAt(0) || user.username?.charAt(0) || 'U'}
                           </div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900">
+                              {user.first_name} {user.last_name}
+                            </div>
+                            <div className="text-sm text-gray-500">{user.email}</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${getRoleBadgeColor(user.user_type)}`}>
-                        {user.user_type?.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {user.work_id || '—'}
-                    </td>
-                    <td className="px-6 py-4">
-                      {getStatusBadge(user)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {new Date(user.date_joined).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex space-x-2">
-                        {/* Role Update Button */}
-                        <button
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setShowRoleModal(true);
-                          }}
-                          disabled={actionLoading}
-                          className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors duration-200 disabled:opacity-50"
-                          title="Change Role"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </button>
-
-                        {/* Verify Button - Only for unverified staff */}
-                        {!user.is_verified && user.user_type !== 'patient' && user.user_type !== 'master_admin' && (
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getRoleBadgeColor(user.user_type)}`}>
+                          {user.user_type?.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {user.work_id || '—'}
+                      </td>
+                      <td className="px-6 py-4">
+                        {getStatusBadge(user)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {new Date(user.date_joined).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex space-x-2">
                           <button
                             onClick={() => {
                               setSelectedUser(user);
-                              setShowVerifyModal(true);
+                              setShowRoleModal(true);
                             }}
-                            disabled={actionLoading}
-                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200 disabled:opacity-50"
-                            title="Verify User"
+                            className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            title="Change Role"
                           >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <i className="fas fa-user-tag"></i>
                           </button>
-                        )}
-
-                        {/* Activate/Deactivate Button - Not for current user or master admin */}
-                        {user.id !== currentUser?.id && user.user_type !== 'master_admin' && (
-                          <button
-                            onClick={() => handleToggleUserStatus(user.id, user.is_active)}
-                            disabled={actionLoading}
-                            className={`p-2 rounded-lg transition-colors duration-200 ${
-                              user.is_active 
-                                ? 'text-red-600 hover:bg-red-50' 
-                                : 'text-green-600 hover:bg-green-50'
-                            } disabled:opacity-50`}
-                            title={user.is_active ? 'Deactivate User' : 'Reactivate User'}
-                          >
-                            {user.is_active ? (
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                              </svg>
-                            ) : (
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            )}
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {filteredUsers.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No users found matching your criteria.</p>
+                          {!user.is_verified && user.user_type !== 'patient' && user.user_type !== 'master_admin' && (
+                            <button
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setShowVerifyModal(true);
+                              }}
+                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                              title="Verify User"
+                            >
+                              <i className="fas fa-check-circle"></i>
+                            </button>
+                          )}
+                          {user.id !== currentUser?.id && user.user_type !== 'master_admin' && (
+                            <button
+                              onClick={() => handleToggleUserStatus(user.id, user.is_active)}
+                              className={`p-2 rounded-lg transition-colors ${
+                                user.is_active 
+                                  ? 'text-red-600 hover:bg-red-50' 
+                                  : 'text-green-600 hover:bg-green-50'
+                              }`}
+                              title={user.is_active ? 'Deactivate User' : 'Reactivate User'}
+                            >
+                              <i className={`fas ${user.is_active ? 'fa-user-slash' : 'fa-user-check'}`}></i>
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
+            {filteredUsers.length === 0 && (
+              <div className="p-8 text-center">
+                <p className="text-gray-500">No users found matching your criteria.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Role Update Modal */}
+      {/* Change Role Modal */}
       {showRoleModal && selectedUser && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4">
-            <div className="fixed inset-0 bg-black opacity-30" onClick={() => setShowRoleModal(false)}></div>
-            <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Update User Role</h3>
-              <p className="text-gray-600 mb-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">Update User Role</h3>
+              <p className="text-gray-600 mt-1">
                 Change role for <span className="font-medium">{selectedUser.first_name} {selectedUser.last_name}</span>
               </p>
-
-              <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
-                {roleOptions.map(role => (
-                  <button
-                    key={role.value}
-                    onClick={() => handleRoleUpdate(selectedUser.id, role.value)}
-                    disabled={actionLoading || (selectedUser.user_type === 'master_admin' && currentUser?.user_type !== 'master_admin')}
-                    className={`w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all duration-200 ${
-                      selectedUser.user_type === role.value
-                        ? `border-${role.color}-500 bg-${role.color}-50`
-                        : 'border-gray-200 hover:border-gray-300'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    <div className="flex items-center">
-                      <span className={`w-3 h-3 rounded-full bg-${role.color}-500 mr-3`}></span>
-                      <span className="font-medium">{role.label}</span>
-                    </div>
-                    {selectedUser.user_type === role.value && (
-                      <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex justify-end space-x-3">
+            </div>
+            <div className="p-6 space-y-3">
+              {roleOptions.map(role => (
                 <button
-                  onClick={() => setShowRoleModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                  key={role.value}
+                  onClick={() => handleRoleUpdate(selectedUser.id, role.value)}
+                  disabled={actionLoading}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                    selectedUser.user_type === role.value
+                      ? 'bg-purple-50 border border-purple-200'
+                      : 'hover:bg-gray-50 border border-transparent'
+                  } disabled:opacity-50`}
                 >
-                  Cancel
+                  <div className="font-medium text-gray-900">{role.label}</div>
+                  <div className="text-sm text-gray-500">
+                    {role.value === 'master_admin' && 'Full system access, user management'}
+                    {role.value === 'admin' && 'System configuration, user management'}
+                    {role.value === 'doctor' && 'Patient care, prescriptions, medical records'}
+                    {role.value === 'nurse' && 'Patient care support, vitals, appointments'}
+                    {role.value === 'pharmacist' && 'Prescription management, medication dispensing'}
+                    {role.value === 'radiologist' && 'Medical imaging, radiology reports'}
+                    {role.value === 'labscientist' && 'Laboratory tests, results management'}
+                    {role.value === 'patient' && 'Personal health record access'}
+                  </div>
                 </button>
-              </div>
+              ))}
+            </div>
+            <div className="p-6 border-t border-gray-200 flex justify-end">
+              <button
+                onClick={() => {
+                  setShowRoleModal(false);
+                  setSelectedUser(null);
+                }}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
@@ -495,36 +466,39 @@ const AdminUsers = () => {
 
       {/* Verify User Modal */}
       {showVerifyModal && selectedUser && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4">
-            <div className="fixed inset-0 bg-black opacity-30" onClick={() => setShowVerifyModal(false)}></div>
-            <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Verify User</h3>
-              <p className="text-gray-600 mb-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">Verify User</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600">
                 Are you sure you want to verify <span className="font-medium">{selectedUser.first_name} {selectedUser.last_name}</span>?
                 This will grant them full access to the system.
               </p>
-
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowVerifyModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleVerifyUser(selectedUser.id)}
-                  disabled={actionLoading}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-                >
-                  {actionLoading ? 'Verifying...' : 'Verify User'}
-                </button>
-              </div>
+            </div>
+            <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowVerifyModal(false);
+                  setSelectedUser(null);
+                }}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleVerifyUser(selectedUser.id)}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                {actionLoading ? 'Verifying...' : 'Verify User'}
+              </button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -29,15 +29,11 @@ const PatientList = () => {
       let response;
       
       if (isPatient && currentUser?.patient_id) {
-        // Patients can only see themselves
         response = await api.get(`/patients/${currentUser.patient_id}/`);
-        // Convert single patient to array for consistent handling
         setPatients(response.data ? [response.data] : []);
       } else {
-        // Doctors and admins can see all patients
         response = await api.get('/patients/patients/');
         
-        // Normalize the response data to always be an array
         let patientsData = response.data;
         
         if (!Array.isArray(patientsData)) {
@@ -68,15 +64,35 @@ const PatientList = () => {
     }
   };
 
-  // Safe filter - ensures patients is always an array
+  // Helper function to get patient display name from nested or flat structure
+  const getPatientName = (patient) => {
+    if (patient.user_details?.full_name) return patient.user_details.full_name;
+    if (patient.full_name) return patient.full_name;
+    if (patient.first_name && patient.last_name) return `${patient.first_name} ${patient.last_name}`;
+    if (patient.user_details?.first_name && patient.user_details?.last_name) {
+      return `${patient.user_details.first_name} ${patient.user_details.last_name}`;
+    }
+    return 'Unknown Patient';
+  };
+
+  const getPatientEmail = (patient) => {
+    return patient.user_details?.email || patient.email || 'No email';
+  };
+
+  const getPatientInitials = (patient) => {
+    const firstName = patient.user_details?.first_name || patient.first_name || '';
+    const lastName = patient.user_details?.last_name || patient.last_name || '';
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+  };
+
   const filteredPatients = Array.isArray(patients) ? patients.filter(patient => {
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
-      const fullName = `${patient.first_name || ''} ${patient.last_name || ''}`.toLowerCase();
-      const email = patient.email?.toLowerCase() || '';
+      const name = getPatientName(patient).toLowerCase();
+      const email = getPatientEmail(patient).toLowerCase();
       const phone = patient.phone?.toLowerCase() || '';
       
-      return fullName.includes(search) || email.includes(search) || phone.includes(search);
+      return name.includes(search) || email.includes(search) || phone.includes(search);
     }
     return true;
   }) : [];
@@ -140,12 +156,8 @@ const PatientList = () => {
                 </svg>
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              My Profile
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Your personal health information
-            </p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h2>
+            <p className="text-gray-600 text-lg">Your personal health information</p>
           </div>
 
           {patient ? (
@@ -153,13 +165,11 @@ const PatientList = () => {
               <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
                 <div className="flex items-center">
                   <div className="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
-                    {patient.first_name?.charAt(0)}{patient.last_name?.charAt(0)}
+                    {getPatientInitials(patient)}
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
-                      {patient.first_name} {patient.last_name}
-                    </h3>
-                    <p className="text-gray-600">{patient.email}</p>
+                    <h3 className="text-2xl font-bold text-gray-900">{getPatientName(patient)}</h3>
+                    <p className="text-gray-600">{getPatientEmail(patient)}</p>
                   </div>
                 </div>
               </div>
@@ -209,12 +219,8 @@ const PatientList = () => {
               </svg>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Patient Management
-          </h2>
-          <p className="text-gray-600 text-lg">
-            View and manage patient records
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Patient Management</h2>
+          <p className="text-gray-600 text-lg">View and manage patient records</p>
         </div>
 
         {/* Search and Add Bar */}
@@ -289,14 +295,14 @@ const PatientList = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center text-blue-600 font-bold mr-3">
-                            {patient.first_name?.charAt(0)}{patient.last_name?.charAt(0)}
+                            {getPatientInitials(patient)}
                           </div>
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {patient.first_name || ''} {patient.last_name || ''}
+                              {getPatientName(patient)}
                             </div>
                             <div className="text-sm text-gray-500">
-                              {patient.email || 'No email'}
+                              {getPatientEmail(patient)}
                             </div>
                           </div>
                         </div>

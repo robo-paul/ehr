@@ -17,8 +17,6 @@ const PatientDetail = () => {
       try {
         setLoading(true);
         setError(null);
-        // The patients router mounts under /api/patients/, and the viewset
-        // registers 'patients', so the endpoint is /patients/patients/:id/
         const resp = await api.get(`/patients/patients/${id}/`);
         if (mounted) setPatient(resp.data);
       } catch (err) {
@@ -31,10 +29,11 @@ const PatientDetail = () => {
     return () => { mounted = false; };
   }, [id]);
 
-  // The patient serializer nests user data under `user`.
-  const firstName = patient?.user?.first_name || patient?.first_name || '';
-  const lastName = patient?.user?.last_name || patient?.last_name || '';
-  const email = patient?.user?.email || patient?.email || '';
+  // Get patient details from nested user_details or flat structure
+  const userDetails = patient?.user_details || {};
+  const firstName = userDetails.first_name || patient?.first_name || '';
+  const lastName = userDetails.last_name || patient?.last_name || '';
+  const email = userDetails.email || patient?.email || '';
   const fullName = `${firstName} ${lastName}`.trim() || 'Unknown Patient';
 
   if (loading) {
@@ -184,18 +183,11 @@ const PatientDetail = () => {
                 </div>
               )}
 
-              {patient.emergency_contact_name && (
+              {patient.emergency_contact && (
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Emergency Contact</label>
                   <div className="mt-1">
-                    <p className="text-gray-900">
-                      <strong>Name:</strong> {patient.emergency_contact_name}
-                    </p>
-                    {patient.emergency_contact_phone && (
-                      <p className="text-gray-900 mt-1">
-                        <strong>Phone:</strong> {patient.emergency_contact_phone}
-                      </p>
-                    )}
+                    <p className="text-gray-900 whitespace-pre-wrap">{patient.emergency_contact}</p>
                   </div>
                 </div>
               )}

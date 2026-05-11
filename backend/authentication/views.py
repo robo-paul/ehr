@@ -3,7 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from knox.models import AuthToken
-from .serializers import LoginSerializer, RegisterPatientSerializer, RegisterStaffSerializer, UserSerializer
+from .serializers import (
+    LoginSerializer, RegisterPatientSerializer, RegisterStaffSerializer, 
+    RegisterDoctorSerializer, UserSerializer
+)
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -38,6 +41,24 @@ class RegisterPatientView(APIView):
             'user': UserSerializer(user).data
         }, status=status.HTTP_201_CREATED)
 
+class RegisterDoctorView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request):
+        serializer = RegisterDoctorSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        
+        token = AuthToken.objects.create(user)
+        
+        response_data = {
+            'token': token[1],
+            'user': UserSerializer(user).data,
+            'message': 'Doctor registration successful. Your account is pending verification.'
+        }
+        
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
 class RegisterStaffView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
@@ -54,7 +75,8 @@ class RegisterStaffView(APIView):
         user = serializer.save()
         
         return Response({
-            'user': UserSerializer(user).data
+            'user': UserSerializer(user).data,
+            'message': f'{user.user_type} account created successfully.'
         }, status=status.HTTP_201_CREATED)
 
 class UserProfileView(APIView):

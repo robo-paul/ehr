@@ -4,13 +4,13 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
-router.register(r'patients', views.PatientViewSet)
-router.register(r'clinical-notes', views.ClinicalNoteViewSet)
-router.register(r'allergies', views.AllergyViewSet)
-router.register(r'chronic-conditions', views.ChronicConditionViewSet)
-router.register(r'medications', views.MedicationViewSet)
-router.register(r'insurance', views.InsuranceViewSet)
-router.register(r'primary-physicians', views.PrimaryCarePhysicianViewSet)
+router.register(r'patients', views.PatientViewSet, basename='patient')
+router.register(r'clinical-notes', views.ClinicalNoteViewSet, basename='clinicalnote')
+router.register(r'allergies', views.AllergyViewSet, basename='allergy')
+router.register(r'chronic-conditions', views.ChronicConditionViewSet, basename='chroniccondition')
+router.register(r'medications', views.MedicationViewSet, basename='medication')
+router.register(r'insurance', views.InsuranceViewSet, basename='insurance')
+router.register(r'primary-physicians', views.PrimaryCarePhysicianViewSet, basename='primarycarephysician')
 
 urlpatterns = [
     path('', include(router.urls)),

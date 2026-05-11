@@ -22,6 +22,7 @@ class IsProviderOrAdmin(permissions.BasePermission):
 
 
 class PatientViewSet(viewsets.ModelViewSet):
+    queryset = Patient.objects.all().order_by('-id')
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'phone']
@@ -97,9 +98,9 @@ class PatientViewSet(viewsets.ModelViewSet):
 
 
 class ClinicalNoteViewSet(viewsets.ModelViewSet):
+    queryset = ClinicalNote.objects.all().order_by('-created_at')
     serializer_class = ClinicalNoteSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = ClinicalNote.objects.all().order_by('-created_at')
     
     def get_queryset(self):
         user = self.request.user
@@ -119,9 +120,9 @@ class ClinicalNoteViewSet(viewsets.ModelViewSet):
 
 
 class AllergyViewSet(viewsets.ModelViewSet):
+    queryset = Allergy.objects.all().order_by('allergen')
     serializer_class = AllergySerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = Allergy.objects.all().order_by('allergen')
     
     def get_queryset(self):
         user = self.request.user
@@ -138,9 +139,9 @@ class AllergyViewSet(viewsets.ModelViewSet):
 
 
 class ChronicConditionViewSet(viewsets.ModelViewSet):
+    queryset = ChronicCondition.objects.all().order_by('condition')
     serializer_class = ChronicConditionSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = ChronicCondition.objects.all().order_by('condition')
     
     def get_queryset(self):
         user = self.request.user
@@ -157,9 +158,9 @@ class ChronicConditionViewSet(viewsets.ModelViewSet):
 
 
 class MedicationViewSet(viewsets.ModelViewSet):
+    queryset = Medication.objects.all().order_by('-prescribed_date')
     serializer_class = MedicationSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = Medication.objects.all().order_by('-prescribed_date')
     
     def get_queryset(self):
         user = self.request.user
@@ -191,9 +192,9 @@ class MedicationViewSet(viewsets.ModelViewSet):
 
 
 class InsuranceViewSet(viewsets.ModelViewSet):
+    queryset = Insurance.objects.all()
     serializer_class = InsuranceSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = Insurance.objects.all()
     
     def get_queryset(self):
         user = self.request.user
@@ -207,9 +208,9 @@ class InsuranceViewSet(viewsets.ModelViewSet):
 
 
 class PrimaryCarePhysicianViewSet(viewsets.ModelViewSet):
+    queryset = PrimaryCarePhysician.objects.all()
     serializer_class = PrimaryCarePhysicianSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = PrimaryCarePhysician.objects.all()
     
     def get_queryset(self):
         user = self.request.user

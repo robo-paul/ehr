@@ -1,3 +1,4 @@
+// src/services/auth.js
 import api from './api';
 
 export const authService = {
@@ -10,8 +11,8 @@ export const authService = {
     return response.data;
   },
 
-  registerStaff: async (userData) => {
-    const response = await api.post('/auth/register/staff/', userData);
+  registerPatient: async (userData) => {
+    const response = await api.post('/auth/register/patient/', userData);
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -19,8 +20,17 @@ export const authService = {
     return response.data;
   },
 
-  registerPatient: async (userData) => {
-    const response = await api.post('/auth/register/patient/', userData);
+  registerDoctor: async (userData) => {
+    const response = await api.post('/auth/register/doctor/', userData);
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+
+  registerStaff: async (userData) => {
+    const response = await api.post('/auth/register/staff/', userData);
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -45,20 +55,17 @@ export const authService = {
     return !!localStorage.getItem('token');
   },
 
-  // Check if user has specific role
   hasRole: (role) => {
     const user = JSON.parse(localStorage.getItem('user'));
     return user?.user_type === role;
   },
 
-  // Check if user is medical staff
   isMedicalStaff: () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const staffRoles = ['doctor', 'nurse', 'pharmacist', 'radiologist', 'labscientist', 'admin'];
     return staffRoles.includes(user?.user_type);
   },
 
-  // Check if user is verified
   isVerified: () => {
     const user = JSON.parse(localStorage.getItem('user'));
     return user?.is_verified || false;

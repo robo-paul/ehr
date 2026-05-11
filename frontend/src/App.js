@@ -194,7 +194,11 @@ function App() {
               </PrivateRoute>
             }
           />
-          
+          <Route path="admin/users" element={
+              <PrivateRoute roles={['master_admin']}>
+                <AdminUsers />
+              </PrivateRoute>
+            } />
           {/* Appointments routes */}
           <Route path="appointments" element={<Appointments />} />
           <Route
