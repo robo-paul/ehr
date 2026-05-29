@@ -13,4 +13,6 @@ urlpatterns = [
     path('register/admin/', views.RegisterAdminView.as_view(), name='register_admin'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     path('pending-requests/', views.PendingRoleRequestsView.as_view(), name='pending_requests'),
+    path('approve-role/<int:user_id>/', views.ApproveRoleView.as_view(), name='approve_role'),
+    path('reject-role/<int:user_id>/', views.RejectRoleView.as_view(), name='reject_role'),
 ]

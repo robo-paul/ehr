@@ -1,31 +1,42 @@
-# backend/authentication/management/commands/fix_superuser.py
-from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
+# backend/create_master_admin.py
+import os
+import django
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ehr_project.settings')
+django.setup()
+
+from django.contrib.auth import get_user_model
 User = get_user_model()
 
-class Command(BaseCommand):
-    help = 'Fix superuser user_type'
+# Delete existing master_admin if exists
+User.objects.filter(username='master_admin').delete()
 
-    def handle(self, *args, **options):
-        # Find all superusers
-        superusers = User.objects.filter(is_superuser=True)
-        
-        if not superusers.exists():
-            # Create a new superuser
-            self.stdout.write("No superuser found. Creating one...")
-            admin = User.objects.create_superuser(
-                username='admin',
-                email='admin@example.com',
-                password='Admin123!'
-            )
-            admin.user_type = 'master_admin'
-            admin.save()
-            self.stdout.write(self.style.SUCCESS(f"Created admin with user_type: {admin.user_type}"))
-        else:
-            # Update existing superusers
-            for user in superusers:
-                old_type = user.user_type
-                user.user_type = 'master_admin'
-                user.save()
-                self.stdout.write(self.style.SUCCESS(f"Updated {user.username}: {old_type} -> {user.user_type}"))
+# Create master admin
+master_admin = User.objects.create_user(
+    username='master_admin',
+    email='master@ehrsystem.com',
+    password='MasterAdmin123!',
+    first_name='Master',
+    last_name='Admin'
+)
+
+# Set admin flags
+master_admin.is_superuser = True
+master_admin.is_staff = True
+master_admin.is_active = True
+master_admin.user_type = 'master_admin'
+master_admin.is_verified = True
+master_admin.role_request_status = 'approved'
+
+# Save with flags only (permissions will be set after save)
+master_admin.save()
+
+print("=" * 50)
+print("✅ MASTER ADMIN CREATED SUCCESSFULLY!")
+print("=" * 50)
+print(f"Username: master_admin")
+print(f"Password: MasterAdmin123!")
+print(f"Email: master@ehrsystem.com")
+print(f"User Type: {master_admin.user_type}")
+print(f"Is Superuser: {master_admin.is_superuser}")
+print("=" * 50)

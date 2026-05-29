@@ -1,46 +1,42 @@
 # backend/chat/serializers.py
 from rest_framework import serializers
+from django.db.models import Q
+from django.utils import timezone  # Add this import
 from .models import Conversation, Message
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 
-                  'full_name', 'user_type', 'avatar']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'user_type']
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip() or obj.username
-    
-    def get_avatar(self, obj):
-        # Return initial or avatar URL
-        return obj.first_name[0].upper() if obj.first_name else obj.username[0].upper()
-
 
 class MessageSerializer(serializers.ModelSerializer):
     sender_name = serializers.SerializerMethodField()
-    sender_avatar = serializers.SerializerMethodField()
     sender_type = serializers.CharField(source='sender.user_type', read_only=True)
     time_display = serializers.SerializerMethodField()
+    attachment_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Message
-        fields = ['id', 'conversation', 'sender', 'sender_name', 'sender_avatar', 
-                  'sender_type', 'content', 'attachment', 'attachment_name', 
-                  'is_read', 'read_at', 'created_at', 'time_display']
-        read_only_fields = ['id', 'sender', 'created_at']
+        fields = ['id', 'conversation', 'sender', 'sender_name', 'sender_type', 
+                  'content', 'attachment', 'attachment_url', 'is_read', 'read_at', 
+                  'created_at', 'time_display']
+        read_only_fields = ['id', 'sender', 'created_at', 'read_at']
     
     def get_sender_name(self, obj):
         return f"{obj.sender.first_name} {obj.sender.last_name}".strip() or obj.sender.username
     
-    def get_sender_avatar(self, obj):
-        return obj.sender.first_name[0].upper() if obj.sender.first_name else obj.sender.username[0].upper()
+    def get_attachment_url(self, obj):
+        if obj.attachment:
+            return obj.attachment.url
+        return None
     
     def get_time_display(self, obj):
         """Return formatted time display"""
@@ -55,7 +51,6 @@ class MessageSerializer(serializers.ModelSerializer):
             return obj.created_at.strftime('%A')
         else:
             return obj.created_at.strftime('%b %d')
-
 
 class ConversationSerializer(serializers.ModelSerializer):
     other_participant = serializers.SerializerMethodField()

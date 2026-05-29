@@ -38,12 +38,12 @@ class User(AbstractUser):
         if self.is_superuser or self.user_type == 'master_admin':
             self.is_verified = True
         
-        # Set proper permissions for master admin
-        if self.user_type == 'master_admin':
+        # Set proper permissions for master admin - ONLY AFTER SAVE (when ID exists)
+        if self.user_type == 'master_admin' and self.pk:
             self.is_superuser = True
             self.is_staff = True
             
-            # Grant all permissions to master admin
+            # Grant all permissions to master admin (only if ID exists)
             self.user_permissions.set(Permission.objects.all())
         
         super().save(*args, **kwargs)

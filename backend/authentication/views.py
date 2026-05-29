@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     
@@ -35,6 +36,7 @@ class LoginView(APIView):
             'user': UserSerializer(user).data
         })
 
+
 class RegisterPatientView(APIView):
     permission_classes = [permissions.AllowAny]
     
@@ -49,6 +51,7 @@ class RegisterPatientView(APIView):
             'token': token[1],
             'user': UserSerializer(user).data
         }, status=status.HTTP_201_CREATED)
+
 
 class RegisterDoctorView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -85,8 +88,9 @@ class RegisterDoctorView(APIView):
             'user': UserSerializer(user).data
         }, status=status.HTTP_201_CREATED)
 
+
 class RegisterStaffView(APIView):
-    permission_classes = [permissions.AllowAny]  # Changed to AllowAny so staff can register
+    permission_classes = [permissions.AllowAny]
     
     def post(self, request):
         serializer = RegisterStaffSerializer(data=request.data)
@@ -120,6 +124,7 @@ class RegisterStaffView(APIView):
             'user': UserSerializer(user).data
         }, status=status.HTTP_201_CREATED)
 
+
 class RegisterAdminView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
@@ -145,6 +150,7 @@ class RegisterAdminView(APIView):
             'message': f'Admin account created successfully.'
         }, status=status.HTTP_201_CREATED)
 
+
 class UserProfileView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
@@ -163,10 +169,10 @@ class PendingRoleRequestsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
-        # Only admins can view pending requests
-        if request.user.user_type not in ['admin', 'master_admin']:
+        # Only master admin can view pending requests
+        if request.user.user_type != 'master_admin':
             return Response(
-                {'error': 'Permission denied'},
+                {'error': 'Permission denied. Master Admin access required.'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
@@ -177,3 +183,111 @@ class PendingRoleRequestsView(APIView):
         
         serializer = UserSerializer(pending_users, many=True)
         return Response(serializer.data)
+
+
+class ApproveRoleView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request, user_id):
+        # Only master admin can approve roles
+        if request.user.user_type != 'master_admin':
+            return Response(
+                {'error': 'Permission denied. Master Admin access required.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        if user.role_request_status != 'pending':
+            return Response(
+                {'error': 'No pending role request for this user'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Approve the user
+        user.is_verified = True
+        user.role_request_status = 'approved'
+        
+        # Set the user type to the requested role if available
+        if user.requested_role:
+            user.user_type = user.requested_role
+        
+        # Set is_staff for admin/doctor/nurse roles
+        if user.user_type in ['admin', 'doctor', 'nurse']:
+            user.is_staff = True
+        
+        user.save()
+        
+        # Send notification to the user
+        try:
+            from notifications.models import Notification
+            Notification.objects.create(
+                user=user,
+                title="Role Request Approved",
+                message=f"Your request to become a {user.user_type.replace('_', ' ').title()} has been approved! You now have full access to the system.",
+                type="system",
+                priority="high",
+                related_url="/dashboard"
+            )
+        except:
+            pass
+        
+        return Response({
+            'message': f'Role request approved for {user.username}',
+            'user': UserSerializer(user).data
+        })
+
+
+class RejectRoleView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request, user_id):
+        # Only master admin can reject roles
+        if request.user.user_type != 'master_admin':
+            return Response(
+                {'error': 'Permission denied. Master Admin access required.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        if user.role_request_status != 'pending':
+            return Response(
+                {'error': 'No pending role request for this user'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Reject the user
+        user.role_request_status = 'rejected'
+        user.is_verified = False
+        user.is_active = False  # Deactivate rejected users
+        user.save()
+        
+        # Send notification to the user
+        try:
+            from notifications.models import Notification
+            Notification.objects.create(
+                user=user,
+                title="Role Request Rejected",
+                message="Your role request has been rejected. Please contact support for more information.",
+                type="system",
+                priority="high"
+            )
+        except:
+            pass
+        
+        return Response({
+            'message': f'Role request rejected for {user.username}'
+        })
