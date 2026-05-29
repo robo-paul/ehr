@@ -10,5 +10,7 @@ urlpatterns = [
     path('register/patient/', views.RegisterPatientView.as_view(), name='register_patient'),
     path('register/doctor/', views.RegisterDoctorView.as_view(), name='register_doctor'),
     path('register/staff/', views.RegisterStaffView.as_view(), name='register_staff'),
+    path('register/admin/', views.RegisterAdminView.as_view(), name='register_admin'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),
+    path('pending-requests/', views.PendingRoleRequestsView.as_view(), name='pending_requests'),
 ]

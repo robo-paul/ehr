@@ -15,6 +15,12 @@ class User(AbstractUser):
         ('master_admin', 'Master Admin'),
     )
     
+    ROLE_REQUEST_STATUS = (
+        ('pending', 'Pending Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+    
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES, default='patient')
     phone = models.CharField(max_length=15, blank=True)
     address = models.TextField(blank=True)
@@ -22,7 +28,11 @@ class User(AbstractUser):
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')], blank=True)
     is_verified = models.BooleanField(default=False)
     work_id = models.CharField(max_length=50, blank=True, null=True)
-       
+    role_request_status = models.CharField(max_length=20, choices=ROLE_REQUEST_STATUS, default='pending')
+    requested_role = models.CharField(max_length=20, blank=True, null=True)
+    specialization = models.CharField(max_length=100, blank=True)
+    license_number = models.CharField(max_length=50, blank=True)
+    
     def save(self, *args, **kwargs):
         # Superusers and master admins are always verified
         if self.is_superuser or self.user_type == 'master_admin':

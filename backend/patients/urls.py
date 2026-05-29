@@ -1,9 +1,9 @@
 # backend/patients/urls.py
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from .router import NoSuffixRouter
 from . import views
 
-router = DefaultRouter()
+router = NoSuffixRouter()
 router.register(r'patients', views.PatientViewSet, basename='patient')
 router.register(r'clinical-notes', views.ClinicalNoteViewSet, basename='clinicalnote')
 router.register(r'allergies', views.AllergyViewSet, basename='allergy')

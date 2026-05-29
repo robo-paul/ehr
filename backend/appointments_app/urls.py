@@ -1,15 +1,17 @@
 # backend/appointments_app/urls.py
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from rest_framework.exceptions import PermissionDenied
+from .router import NoSuffixRouter
 from . import views
 
-router = DefaultRouter()
+router = NoSuffixRouter()
 router.register(r'appointments', views.AppointmentViewSet, basename='appointment')
 
 urlpatterns = [
     path('', include(router.urls)),
-    # Nested routes for messages
+]
+
+# Add nested routes
+urlpatterns += [
     path('appointments/<int:appointment_id>/messages/', 
          views.AppointmentMessageViewSet.as_view({
              'get': 'list',
@@ -20,7 +22,6 @@ urlpatterns = [
              'get': 'retrieve',
              'delete': 'destroy'
          }), name='appointment-message-detail'),
-    # Nested routes for feedback (optional)
     path('appointments/<int:appointment_id>/feedback/',
          views.AppointmentFeedbackViewSet.as_view({
              'get': 'retrieve',

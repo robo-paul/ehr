@@ -85,15 +85,27 @@ class ConversationViewSet(viewsets.ModelViewSet):
     def search_users(self, request):
         """Search for users to start a conversation with"""
         query = request.query_params.get('q', '')
-        if len(query) < 2:
+        
+        # Return empty if query is too short
+        if len(query) < 1:
             return Response([])
         
+        # Search across all users except current user
+        # Include users with any role (patient, doctor, nurse, etc.)
         users = User.objects.filter(
             Q(username__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
             Q(email__icontains=query)
         ).exclude(id=request.user.id)[:20]
+        
+        # If no users found with the exact search, try a more flexible search
+        if not users and len(query) > 2:
+            users = User.objects.filter(
+                Q(username__istartswith=query) |
+                Q(first_name__istartswith=query) |
+                Q(last_name__istartswith=query)
+            ).exclude(id=request.user.id)[:10]
         
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
@@ -123,7 +135,11 @@ class MessageViewSet(viewsets.ModelViewSet):
         else:
             # Create new conversation if not provided
             recipient_id = self.request.data.get('recipient')
-            recipient = User.objects.get(id=recipient_id)
+            try:
+                recipient = User.objects.get(id=recipient_id)
+            except User.DoesNotExist:
+                raise serializers.ValidationError({"recipient": "User not found"})
+            
             conversation = Conversation.objects.filter(
                 (Q(participant1=self.request.user) & Q(participant2=recipient)) |
                 (Q(participant1=recipient) & Q(participant2=self.request.user))
@@ -144,14 +160,15 @@ class MessageViewSet(viewsets.ModelViewSet):
         # Send notification to recipient
         recipient = conversation.get_other_participant(self.request.user)
         
-        Notification.objects.create(
-            user=recipient,
-            title="New Message",
-            message=f"{self.request.user.get_full_name()} sent you a message",
-            type="message",
-            priority="medium",
-            related_url=f"/messages?conversation={conversation.id}"
-        )
+        if recipient:
+            Notification.objects.create(
+                user=recipient,
+                title="New Message",
+                message=f"{self.request.user.get_full_name() or self.request.user.username} sent you a message",
+                type="message",
+                priority="medium",
+                related_url=f"/messages?conversation={conversation.id}"
+            )
     
     @action(detail=True, methods=['patch'])
     def mark_read(self, request, pk=None):

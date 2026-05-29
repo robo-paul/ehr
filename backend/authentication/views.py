@@ -19,6 +19,15 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         
         user = serializer.validated_data['user']
+        
+        # Check if user is verified (for staff roles)
+        if user.user_type != 'patient' and user.user_type != 'master_admin':
+            if not user.is_verified:
+                return Response(
+                    {'error': 'Your account is pending verification. Please wait for admin approval.'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+        
         token = AuthToken.objects.create(user)
         
         return Response({
@@ -49,24 +58,76 @@ class RegisterDoctorView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         
-        token = AuthToken.objects.create(user)
+        # Set role request status
+        user.role_request_status = 'pending'
+        user.requested_role = 'doctor'
+        user.is_verified = False
+        user.save()
         
-        response_data = {
-            'token': token[1],
-            'user': UserSerializer(user).data,
-            'message': 'Doctor registration successful. Your account is pending verification.'
-        }
+        # Create notification for admins
+        try:
+            from notifications.models import Notification
+            admins = User.objects.filter(user_type__in=['admin', 'master_admin'])
+            for admin in admins:
+                Notification.objects.create(
+                    user=admin,
+                    title="New Doctor Registration",
+                    message=f"Dr. {user.get_full_name()} has registered and needs approval.",
+                    type="system",
+                    priority="high",
+                    related_url="/admin/users"
+                )
+        except:
+            pass
         
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response({
+            'message': 'Doctor registration submitted. Please wait for admin approval.',
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_201_CREATED)
 
 class RegisterStaffView(APIView):
+    permission_classes = [permissions.AllowAny]  # Changed to AllowAny so staff can register
+    
+    def post(self, request):
+        serializer = RegisterStaffSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        
+        # Set role request status
+        user.role_request_status = 'pending'
+        user.requested_role = user.user_type
+        user.is_verified = False
+        user.save()
+        
+        # Create notification for admins
+        try:
+            from notifications.models import Notification
+            admins = User.objects.filter(user_type__in=['admin', 'master_admin'])
+            for admin in admins:
+                Notification.objects.create(
+                    user=admin,
+                    title=f"New {user.user_type.title()} Registration",
+                    message=f"{user.get_full_name()} has registered as a {user.user_type} and needs approval.",
+                    type="system",
+                    priority="high",
+                    related_url="/admin/users"
+                )
+        except:
+            pass
+        
+        return Response({
+            'message': f'Registration submitted as {user.user_type}. Please wait for admin approval.',
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_201_CREATED)
+
+class RegisterAdminView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
-        # Only admins can create staff users
-        if request.user.user_type not in ['admin', 'master_admin']:
+        # Only master admin can create other admins
+        if request.user.user_type != 'master_admin':
             return Response(
-                {'error': 'You do not have permission to create staff users'},
+                {'error': 'Only Master Admin can create admin users'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
@@ -74,9 +135,14 @@ class RegisterStaffView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         
+        # Admins are auto-verified
+        user.is_verified = True
+        user.role_request_status = 'approved'
+        user.save()
+        
         return Response({
             'user': UserSerializer(user).data,
-            'message': f'{user.user_type} account created successfully.'
+            'message': f'Admin account created successfully.'
         }, status=status.HTTP_201_CREATED)
 
 class UserProfileView(APIView):
@@ -90,4 +156,24 @@ class UserProfileView(APIView):
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        return Response(serializer.data)
+
+
+class PendingRoleRequestsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        # Only admins can view pending requests
+        if request.user.user_type not in ['admin', 'master_admin']:
+            return Response(
+                {'error': 'Permission denied'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        pending_users = User.objects.filter(
+            role_request_status='pending',
+            is_verified=False
+        ).exclude(user_type='patient')
+        
+        serializer = UserSerializer(pending_users, many=True)
         return Response(serializer.data)

@@ -5768,3 +5768,6 @@ INFO 2026-05-06 14:30:16,460 basehttp 17920 3112 "GET /api/patients/ HTTP/1.1" 2
 WARNING 2026-05-06 14:30:16,529 basehttp 17920 18900 "GET /favicon.ico HTTP/1.1" 404 3267
 INFO 2026-05-06 14:41:28,910 basehttp 17920 12312 "GET /api/patients/ HTTP/1.1" 200 474
 INFO 2026-05-06 15:00:46,895 basehttp 17920 6600 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-29 21:54:16,592 autoreload 9936 14064 Watching for file changes with StatReloader
+INFO 2026-05-29 21:58:10,631 autoreload 9644 15248 Watching for file changes with StatReloader
+INFO 2026-05-29 22:04:39,939 autoreload 14944 12628 Watching for file changes with StatReloader
