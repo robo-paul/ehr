@@ -37,6 +37,7 @@ class LoginView(APIView):
         })
 
 
+# backend/authentication/views.py
 class RegisterPatientView(APIView):
     permission_classes = [permissions.AllowAny]
     
@@ -44,6 +45,12 @@ class RegisterPatientView(APIView):
         serializer = RegisterPatientSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        
+        # Patients are auto-verified - no approval needed
+        user.is_verified = True
+        user.role_request_status = 'approved'  # Or set to None
+        user.is_active = True
+        user.save()
         
         token = AuthToken.objects.create(user)
         

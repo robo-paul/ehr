@@ -46,7 +46,8 @@ class RegisterPatientSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         user.set_password(password)
         user.user_type = 'patient'
-        user.is_verified = False
+        user.is_verified = True  # Auto-verify patients
+        user.role_request_status = 'approved'  # No pending status
         user.save()
         return user
 

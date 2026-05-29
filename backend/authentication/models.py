@@ -37,6 +37,12 @@ class User(AbstractUser):
         # Superusers and master admins are always verified
         if self.is_superuser or self.user_type == 'master_admin':
             self.is_verified = True
+            self.role_request_status = 'approved'
+        
+        # Patients are auto-verified - no approval needed
+        if self.user_type == 'patient':
+            self.is_verified = True
+            self.role_request_status = 'approved'
         
         # Set proper permissions for master admin - ONLY AFTER SAVE (when ID exists)
         if self.user_type == 'master_admin' and self.pk:

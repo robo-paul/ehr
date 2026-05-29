@@ -14,11 +14,18 @@ const AdminUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [stats, setStats] = useState(null);
   const currentUser = authService.getCurrentUser();
 
   const isMasterAdmin = currentUser?.user_type === 'master_admin';
+
+  // Check if user needs approval
+  const needsApproval = (user) => {
+    const staffRoles = ['doctor', 'nurse', 'pharmacist', 'radiologist', 'labscientist', 'admin'];
+    return staffRoles.includes(user.user_type) && !user.is_verified && user.is_active;
+  };
 
   useEffect(() => {
     if (!isMasterAdmin) {
@@ -34,6 +41,7 @@ const AdminUsers = () => {
     setLoading(true);
     try {
       const response = await api.get('/admin/users/');
+      console.log('Fetched users:', response.data);
       setUsers(response.data);
       setError('');
     } catch (err) {
@@ -50,6 +58,42 @@ const AdminUsers = () => {
       setStats(response.data);
     } catch (err) {
       console.error('Error fetching stats:', err);
+    }
+  };
+
+  const handleApproveUser = async (userId) => {
+    setActionLoading(true);
+    try {
+      await api.post(`/admin/users/${userId}/approve_role/`);
+      setSuccess('User approved successfully!');
+      fetchUsers();
+      fetchStats();
+      setShowApproveModal(false);
+      setSelectedUser(null);
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error approving user');
+      setTimeout(() => setError(''), 3000);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRejectUser = async (userId) => {
+    if (!window.confirm('Are you sure you want to reject this user? They will be deactivated.')) return;
+    
+    setActionLoading(true);
+    try {
+      await api.post(`/admin/users/${userId}/reject_role/`);
+      setSuccess('User rejected');
+      fetchUsers();
+      fetchStats();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error rejecting user');
+      setTimeout(() => setError(''), 3000);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -131,6 +175,9 @@ const AdminUsers = () => {
     if (!user.is_active) {
       return <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Deactivated</span>;
     }
+    if (needsApproval(user)) {
+      return <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800 animate-pulse">Pending Approval</span>;
+    }
     if (user.is_verified) {
       return <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Verified</span>;
     }
@@ -151,6 +198,8 @@ const AdminUsers = () => {
     }
     return true;
   });
+
+  const pendingApprovals = users.filter(u => needsApproval(u)).length;
 
   const roleOptions = [
     { value: 'master_admin', label: 'Master Admin', color: 'purple' },
@@ -205,6 +254,12 @@ const AdminUsers = () => {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
             <p className="text-gray-600 mt-2">Manage users, roles, and permissions across the system</p>
+            {pendingApprovals > 0 && (
+              <div className="mt-2 inline-flex items-center gap-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+                <span className="animate-pulse">⏳</span>
+                {pendingApprovals} pending approval(s)
+              </div>
+            )}
           </div>
 
           {/* Success/Error Messages */}
@@ -253,8 +308,8 @@ const AdminUsers = () => {
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">Pending Verification</p>
-                    <p className="text-3xl font-bold text-yellow-600">{stats.pending_verification || 0}</p>
+                    <p className="text-sm text-gray-500">Pending</p>
+                    <p className="text-3xl font-bold text-yellow-600">{pendingApprovals}</p>
                   </div>
                   <div className="bg-yellow-100 p-3 rounded-full">
                     <i className="fas fa-clock text-yellow-600"></i>
@@ -271,6 +326,59 @@ const AdminUsers = () => {
                     <i className="fas fa-user-check text-purple-600"></i>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pending Approvals Section */}
+          {pendingApprovals > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-orange-200 mb-6 overflow-hidden">
+              <div className="px-6 py-4 bg-orange-50 border-b border-orange-200">
+                <h3 className="text-lg font-semibold text-orange-800 flex items-center gap-2">
+                  <span className="animate-pulse">⏳</span>
+                  Pending Approvals ({pendingApprovals})
+                </h3>
+              </div>
+              <div className="divide-y divide-gray-200">
+                {users.filter(u => needsApproval(u)).map(user => (
+                  <div key={user.id} className="px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
+                        {user.first_name?.charAt(0) || user.username?.charAt(0) || 'U'}
+                      </div>
+                      <div className="ml-3">
+                        <p className="font-medium text-gray-900">{user.first_name} {user.last_name}</p>
+                        <p className="text-sm text-gray-500">{user.email}</p>
+                        <p className="text-xs text-orange-600 mt-1">
+                          Role: <span className="font-medium capitalize">{user.user_type?.replace('_', ' ')}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowApproveModal(true);
+                        }}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleRejectUser(user.id)}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -362,6 +470,21 @@ const AdminUsers = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex space-x-2">
+                          {/* Approve Button for pending users */}
+                          {needsApproval(user) && (
+                            <button
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setShowApproveModal(true);
+                              }}
+                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                              title="Approve User"
+                            >
+                              <i className="fas fa-check-circle"></i>
+                            </button>
+                          )}
+
+                          {/* Role Update Button */}
                           <button
                             onClick={() => {
                               setSelectedUser(user);
@@ -372,7 +495,9 @@ const AdminUsers = () => {
                           >
                             <i className="fas fa-user-tag"></i>
                           </button>
-                          {!user.is_verified && user.user_type !== 'patient' && user.user_type !== 'master_admin' && (
+
+                          {/* Verify Button */}
+                          {!user.is_verified && user.user_type !== 'patient' && user.user_type !== 'master_admin' && !needsApproval(user) && (
                             <button
                               onClick={() => {
                                 setSelectedUser(user);
@@ -384,6 +509,8 @@ const AdminUsers = () => {
                               <i className="fas fa-check-circle"></i>
                             </button>
                           )}
+
+                          {/* Activate/Deactivate Button */}
                           {user.id !== currentUser?.id && user.user_type !== 'master_admin' && (
                             <button
                               onClick={() => handleToggleUserStatus(user.id, user.is_active)}
@@ -493,6 +620,44 @@ const AdminUsers = () => {
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
               >
                 {actionLoading ? 'Verifying...' : 'Verify User'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Approve User Modal */}
+      {showApproveModal && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">Approve User</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600">
+                Are you sure you want to approve <span className="font-medium">{selectedUser.first_name} {selectedUser.last_name}</span> as a{' '}
+                <span className="font-medium capitalize">{selectedUser.user_type?.replace('_', ' ')}</span>?
+              </p>
+              <p className="text-sm text-gray-500">
+                This will grant them full access to the system with their assigned role permissions.
+              </p>
+            </div>
+            <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowApproveModal(false);
+                  setSelectedUser(null);
+                }}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleApproveUser(selectedUser.id)}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                {actionLoading ? 'Approving...' : 'Approve User'}
               </button>
             </div>
           </div>
