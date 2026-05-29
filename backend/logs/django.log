@@ -6362,3 +6362,30 @@ INFO 2026-05-29 23:47:02,582 basehttp 8704 9460 "GET /api/notifications/notifica
 INFO 2026-05-29 23:47:02,623 basehttp 8704 9460 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
 INFO 2026-05-29 23:47:53,459 autoreload 8704 11996 C:\Users\Paul\hacksmith\ehr\backend\authentication\models.py changed, reloading.
 INFO 2026-05-29 23:47:55,424 autoreload 12176 11956 Watching for file changes with StatReloader
+INFO 2026-05-29 23:47:59,948 basehttp 12176 10644 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-29 23:48:00,034 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:00,034 basehttp 12176 6764 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:00,054 basehttp 12176 6764 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:00,061 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:00,077 basehttp 12176 6764 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:00,091 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:02,068 basehttp 12176 14912 "GET /api/admin/users/ HTTP/1.1" 200 2805
+INFO 2026-05-29 23:48:29,601 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:29,623 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:48:32,189 basehttp 12176 14912 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-29 23:49:00,567 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:49:00,594 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:49:30,554 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:49:30,572 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:50:00,556 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:50:00,569 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:50:30,573 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:50:30,594 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:51:00,635 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:51:00,670 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:51:30,554 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:51:30,582 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:52:02,545 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:52:02,560 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:02,552 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:02,564 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
