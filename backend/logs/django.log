@@ -6389,3 +6389,315 @@ INFO 2026-05-29 23:52:02,545 basehttp 12176 14912 "GET /api/notifications/notifi
 INFO 2026-05-29 23:52:02,560 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
 INFO 2026-05-29 23:53:02,552 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
 INFO 2026-05-29 23:53:02,564 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:48,857 basehttp 12176 14912 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-29 23:53:48,882 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:48,911 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:48,982 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:49,009 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:49,026 basehttp 12176 14912 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:49,049 basehttp 12176 14912 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:53:56,576 basehttp 12176 14912 "OPTIONS /api/notifications/notifications/ HTTP/1.1" 200 0
+INFO 2026-05-29 23:53:56,587 basehttp 12176 15488 "OPTIONS /api/notifications/preferences/ HTTP/1.1" 200 0
+INFO 2026-05-29 23:53:56,595 basehttp 12176 14912 "OPTIONS /api/notifications/preferences/ HTTP/1.1" 200 0
+INFO 2026-05-29 23:53:56,612 basehttp 12176 15488 "GET /api/notifications/notifications/ HTTP/1.1" 200 52
+INFO 2026-05-29 23:53:56,630 basehttp 12176 15488 "GET /api/notifications/notifications/ HTTP/1.1" 200 52
+INFO 2026-05-29 23:53:56,963 basehttp 12176 52 "GET /api/notifications/preferences/ HTTP/1.1" 200 52
+INFO 2026-05-29 23:53:56,985 basehttp 12176 52 "GET /api/notifications/preferences/ HTTP/1.1" 200 52
+INFO 2026-05-29 23:54:13,868 basehttp 12176 52 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-29 23:54:16,136 basehttp 12176 52 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-29 23:54:16,306 basehttp 12176 52 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-29 23:54:18,798 basehttp 12176 52 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:54:18,818 basehttp 12176 52 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:54:19,068 basehttp 12176 52 "OPTIONS /api/appointments_app/appointments/? HTTP/1.1" 200 0
+INFO 2026-05-29 23:54:19,073 basehttp 12176 15488 "OPTIONS /api/appointments_app/appointments/? HTTP/1.1" 200 0
+INFO 2026-05-29 23:54:19,100 basehttp 12176 52 "GET /api/appointments_app/appointments/? HTTP/1.1" 200 52
+INFO 2026-05-29 23:54:19,122 basehttp 12176 52 "GET /api/appointments_app/appointments/? HTTP/1.1" 200 52
+INFO 2026-05-29 23:54:29,171 basehttp 12176 52 "OPTIONS /api/accounts/providers/ HTTP/1.1" 200 0
+INFO 2026-05-29 23:54:29,171 basehttp 12176 15488 "OPTIONS /api/patients/patients/ HTTP/1.1" 200 0
+INFO 2026-05-29 23:54:29,172 basehttp 12176 14912 "OPTIONS /api/accounts/providers/ HTTP/1.1" 200 0
+INFO 2026-05-29 23:54:29,175 basehttp 12176 14372 "OPTIONS /api/patients/patients/ HTTP/1.1" 200 0
+INFO 2026-05-29 23:54:30,580 basehttp 12176 14912 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+WARNING 2026-05-29 23:54:30,590 basehttp 12176 52 "GET /api/accounts/providers/ HTTP/1.1" 404 3303
+WARNING 2026-05-29 23:54:30,659 basehttp 12176 52 "GET /api/accounts/providers/ HTTP/1.1" 404 3303
+INFO 2026-05-29 23:54:30,669 basehttp 12176 14912 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-29 23:54:49,104 basehttp 12176 9872 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:54:49,125 basehttp 12176 9872 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:55:10,240 basehttp 12176 9872 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-29 23:55:18,801 basehttp 12176 9872 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:55:18,821 basehttp 12176 9872 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:55:49,546 basehttp 12176 9872 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:55:49,561 basehttp 12176 9872 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:56:20,344 basehttp 12176 9872 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:56:20,384 basehttp 12176 9872 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:56:49,570 basehttp 12176 9872 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:56:49,586 basehttp 12176 9872 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:57:20,972 basehttp 12176 9872 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:57:21,201 basehttp 12176 9872 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:58:02,567 basehttp 12176 9872 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:58:02,888 basehttp 12176 9872 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-29 23:58:17,756 autoreload 12176 11956 C:\Users\Paul\hacksmith\ehr\backend\authentication\views.py changed, reloading.
+INFO 2026-05-29 23:59:26,933 autoreload 17148 14260 Watching for file changes with StatReloader
+INFO 2026-05-30 00:00:08,272 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:00:08,322 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:02,572 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:02,628 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:47,392 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:48,413 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:48,580 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:48,603 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:48,643 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:48,718 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:53,445 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:53,451 basehttp 17148 14708 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:53,493 basehttp 17148 14708 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:53,507 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:01:56,500 basehttp 17148 756 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:02:10,314 basehttp 17148 756 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:02:23,438 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:02:23,465 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:02:28,803 basehttp 17148 756 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:02:53,440 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:02:53,466 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:03:23,428 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:03:23,449 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:03:53,567 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:03:53,595 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:04:23,551 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:04:23,580 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:05:00,901 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:05:01,014 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:05:23,547 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:05:23,568 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:06:01,320 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:06:01,341 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:06:04,954 basehttp 17148 15328 "GET /api/auth/providers/ HTTP/1.1" 200 499
+INFO 2026-05-30 00:06:23,561 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:06:23,597 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:06:53,556 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:06:53,590 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:07:25,965 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:07:26,332 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:07:28,385 basehttp 17148 756 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:07:30,246 basehttp 17148 756 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:07:30,295 basehttp 17148 756 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:07:32,042 basehttp 17148 756 "OPTIONS /api/auth/providers/ HTTP/1.1" 200 0
+INFO 2026-05-30 00:07:32,122 basehttp 17148 756 "GET /api/auth/providers/ HTTP/1.1" 200 499
+INFO 2026-05-30 00:07:32,138 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:07:32,188 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:07:32,484 basehttp 17148 16772 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:07:32,496 basehttp 17148 4148 "GET /api/auth/providers/ HTTP/1.1" 200 499
+INFO 2026-05-30 00:07:32,510 basehttp 17148 14808 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:07:32,783 basehttp 17148 756 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:07:33,131 basehttp 17148 756 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:08:01,996 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:08:02,029 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:08:32,005 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:08:32,039 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:09:02,005 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:09:02,029 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:09:31,988 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:09:32,005 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:09:36,743 basehttp 17148 756 "OPTIONS /api/appointments_app/appointments/ HTTP/1.1" 200 0
+ERROR 2026-05-30 00:09:38,673 log 17148 756 Internal Server Error: /api/appointments_app/appointments/
+Traceback (most recent call last):
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 328, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: NOT NULL constraint failed: appointments_app_appointment.patient_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\appointments_app\views.py", line 83, in perform_create
+    serializer.save(created_by=self.request.user)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\serializers.py", line 212, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\appointments_app\serializers.py", line 59, in create
+    return super().create(validated_data)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\rest_framework\serializers.py", line 962, in create
+    instance = ModelClass._default_manager.create(**validated_data)
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\query.py", line 658, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\base.py", line 814, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\base.py", line 877, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\base.py", line 1020, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\base.py", line 1061, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\query.py", line 1805, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1822, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\utils.py", line 102, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Paul\hacksmith\ehr\backend\venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 328, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.IntegrityError: NOT NULL constraint failed: appointments_app_appointment.patient_id
+ERROR 2026-05-30 00:09:38,762 basehttp 17148 756 "POST /api/appointments_app/appointments/ HTTP/1.1" 500 235703
+INFO 2026-05-30 00:10:02,551 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:10:02,570 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:10:32,581 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:10:32,602 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:11:02,719 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:11:02,762 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:12:02,559 basehttp 17148 756 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:12:02,581 basehttp 17148 756 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:12:43,758 autoreload 17148 14260 C:\Users\Paul\hacksmith\ehr\backend\appointments_app\serializers.py changed, reloading.
+INFO 2026-05-30 00:13:02,766 autoreload 8156 14664 Watching for file changes with StatReloader
+INFO 2026-05-30 00:13:30,270 basehttp 8156 8652 "GET /api/auth/providers/ HTTP/1.1" 200 499
+INFO 2026-05-30 00:13:30,327 basehttp 8156 14904 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:14:02,552 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:14:02,574 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:14:58,035 basehttp 8156 14904 "GET /api/auth/providers/ HTTP/1.1" 200 499
+INFO 2026-05-30 00:14:58,074 basehttp 8156 8652 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:15:02,549 basehttp 8156 8652 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:15:02,570 basehttp 8156 8652 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:02,552 basehttp 8156 8652 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:02,581 basehttp 8156 8652 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:10,230 basehttp 8156 8652 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:10,245 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:10,300 basehttp 8156 8652 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:10,325 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:17,611 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:17,636 basehttp 8156 8652 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:17,726 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:18,010 basehttp 8156 8652 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:19,960 basehttp 8156 8652 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:16:22,521 basehttp 8156 8652 "POST /api/appointments_app/appointments/ HTTP/1.1" 201 258
+INFO 2026-05-30 00:16:23,079 basehttp 8156 8652 "GET /api/appointments_app/appointments/ HTTP/1.1" 200 678
+INFO 2026-05-30 00:16:23,085 basehttp 8156 14904 "GET /api/appointments_app/appointments/ HTTP/1.1" 200 678
+INFO 2026-05-30 00:16:44,707 basehttp 8156 14904 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:16:47,603 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:16:47,620 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:17:10,715 basehttp 8156 14904 "GET /api/notifications/notifications/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:10,739 basehttp 8156 14904 "GET /api/notifications/notifications/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:11,407 basehttp 8156 8652 "GET /api/notifications/preferences/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:11,416 basehttp 8156 8652 "GET /api/notifications/preferences/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:15,785 basehttp 8156 8652 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:17:15,853 basehttp 8156 8652 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:17:17,598 basehttp 8156 8652 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:17:17,616 basehttp 8156 8652 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:17:23,926 basehttp 8156 8652 "OPTIONS /api/patients/patients/4/ HTTP/1.1" 200 0
+INFO 2026-05-30 00:17:23,927 basehttp 8156 14904 "OPTIONS /api/patients/patients/4/ HTTP/1.1" 200 0
+INFO 2026-05-30 00:17:23,967 basehttp 8156 14904 "GET /api/patients/patients/4/ HTTP/1.1" 200 631
+INFO 2026-05-30 00:17:23,996 basehttp 8156 14904 "GET /api/patients/patients/4/ HTTP/1.1" 200 631
+INFO 2026-05-30 00:17:24,059 basehttp 8156 14904 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:24,076 basehttp 8156 14904 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:24,094 basehttp 8156 8652 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:17:24,156 basehttp 8156 8652 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:17:47,594 basehttp 8156 8652 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:17:47,610 basehttp 8156 8652 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:17:51,233 basehttp 8156 8652 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:51,250 basehttp 8156 8652 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:57,928 basehttp 8156 8652 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:57,949 basehttp 8156 8652 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:17:57,968 basehttp 8156 14904 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:17:58,037 basehttp 8156 14904 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:18:18,560 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:18:18,580 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:18:48,546 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:18:48,559 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:19:16,807 basehttp 8156 14904 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:19:17,606 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:19:17,628 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:19:19,088 basehttp 8156 14904 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:19:19,151 basehttp 8156 14904 "GET /api/patients/patients/ HTTP/1.1" 200 2531
+INFO 2026-05-30 00:19:20,474 basehttp 8156 14904 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:19:20,499 basehttp 8156 14904 "GET /api/reports/ HTTP/1.1" 200 52
+INFO 2026-05-30 00:19:40,956 basehttp 8156 14960 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:19:45,442 basehttp 8156 14904 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:19:47,607 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:19:47,638 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:20:17,603 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:20:17,623 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:20:47,606 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:20:47,627 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:21:17,602 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:21:17,618 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:21:47,604 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:21:47,616 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:22:14,699 basehttp 8156 14904 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:22:17,597 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:22:17,610 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:22:34,760 basehttp 8156 14904 "GET /api/patients/ HTTP/1.1" 200 474
+INFO 2026-05-30 00:22:48,553 basehttp 8156 14904 "GET /api/notifications/notifications/unread_count/ HTTP/1.1" 200 11
+INFO 2026-05-30 00:22:48,765 basehttp 8156 14904 "GET /api/chat/conversations/unread_count/ HTTP/1.1" 200 11

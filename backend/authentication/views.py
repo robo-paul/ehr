@@ -11,6 +11,20 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class ProvidersListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        # Get all users who can be providers (doctors, nurses, admin, master_admin)
+        provider_roles = ['doctor', 'nurse', 'admin', 'master_admin']
+        providers = User.objects.filter(
+            user_type__in=provider_roles,
+            is_active=True,
+            is_verified=True
+        ).exclude(role_request_status='pending')
+        
+        serializer = UserSerializer(providers, many=True)
+        return Response(serializer.data)
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -37,7 +51,6 @@ class LoginView(APIView):
         })
 
 
-# backend/authentication/views.py
 class RegisterPatientView(APIView):
     permission_classes = [permissions.AllowAny]
     

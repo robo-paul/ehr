@@ -56,15 +56,14 @@ const AppointmentForm = () => {
   const fetchProviders = async () => {
     setLoadingProviders(true);
     try {
-      const response = await api.get('/accounts/providers/');
+      const response = await api.get('/auth/providers/');
       let providersData = response.data;
       
-      // Normalize to array
       if (!Array.isArray(providersData)) {
         if (providersData?.results) providersData = providersData.results;
-        else if (providersData?.data) providersData = providersData.data;
         else providersData = [];
       }
+      
       setProviders(providersData);
     } catch (error) {
       console.error('Error fetching providers:', error);
@@ -80,23 +79,10 @@ const AppointmentForm = () => {
       const response = await api.get('/patients/patients/');
       let patientsData = response.data;
       
-      // Normalize to array - THIS IS THE KEY FIX
       if (!Array.isArray(patientsData)) {
-        if (patientsData?.results) {
-          patientsData = patientsData.results;
-        } else if (patientsData?.data) {
-          patientsData = patientsData.data;
-        } else if (typeof patientsData === 'object' && patientsData !== null) {
-          // If it's an object with numeric keys, convert to array
-          const values = Object.values(patientsData);
-          if (values.length > 0 && values.some(v => typeof v === 'object')) {
-            patientsData = values;
-          } else {
-            patientsData = [];
-          }
-        } else {
-          patientsData = [];
-        }
+        if (patientsData?.results) patientsData = patientsData.results;
+        else if (patientsData?.data) patientsData = patientsData.data;
+        else patientsData = [];
       }
       
       setPatients(patientsData);
@@ -171,32 +157,92 @@ const AppointmentForm = () => {
     }
 
     try {
+      let patientId = formData.patient;
+      
+      if (isPatient) {
+        patientId = currentUser?.patient_profile?.id || currentUser?.patient_id;
+        
+        if (!patientId) {
+          try {
+            const patientResponse = await api.get('/patients/patients/');
+            let patientsData = patientResponse.data;
+            if (!Array.isArray(patientsData)) {
+              patientsData = patientsData.results || [];
+            }
+            const userPatient = patientsData.find(p => p.user === currentUser?.id);
+            if (userPatient) {
+              patientId = userPatient.id;
+            }
+          } catch (err) {
+            console.error('Error fetching patient ID:', err);
+          }
+        }
+        
+        if (!patientId) {
+          setError('Patient profile not found. Please contact support.');
+          setSubmitting(false);
+          return;
+        }
+      }
+      
+      let appointmentDate;
+      try {
+        appointmentDate = new Date(formData.patient_suggested_date);
+        if (isNaN(appointmentDate.getTime())) {
+          setError('Invalid date format');
+          setSubmitting(false);
+          return;
+        }
+      } catch (err) {
+        setError('Invalid date format');
+        setSubmitting(false);
+        return;
+      }
+      
       const submitData = {
-        ...formData,
-        patient: isPatient ? currentUser?.patient_id : formData.patient,
-        patient_suggested_date: new Date(formData.patient_suggested_date).toISOString()
+        title: formData.title,
+        patient_suggested_date: appointmentDate.toISOString(),
+        appointment_type: formData.appointment_type,
+        estimated_duration: parseInt(formData.duration),
+        patient: patientId,
+        provider: parseInt(formData.provider),
+        reason: formData.reason || '',
+        description: formData.description || ''
       };
+
+      console.log('Submitting appointment data:', submitData);
 
       if (isEdit) {
         await appointmentsService.update(id, submitData);
-        navigate('/appointments', { 
-          state: { 
-            success: true,
-            message: 'Appointment updated successfully!'
-          }
-        });
       } else {
         await appointmentsService.create(submitData);
-        navigate('/appointments', { 
-          state: { 
-            success: true,
-            message: 'Appointment requested successfully!'
-          }
-        });
       }
+      
+      navigate('/appointments', { 
+        state: { 
+          success: true,
+          message: isEdit ? 'Appointment updated successfully!' : 'Appointment requested successfully!'
+        }
+      });
+      
     } catch (error) {
       console.error('Error saving appointment:', error);
-      setError(error.response?.data?.message || error.response?.data?.error || 'Failed to save appointment. Please try again.');
+      
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        if (typeof errorData === 'object') {
+          const errorMessages = Object.entries(errorData)
+            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+            .join('; ');
+          setError(errorMessages);
+        } else if (errorData.detail) {
+          setError(errorData.detail);
+        } else {
+          setError(errorData.message || 'Failed to save appointment. Please try again.');
+        }
+      } else {
+        setError('Failed to save appointment. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -209,7 +255,6 @@ const AppointmentForm = () => {
   };
 
   const getPatientDisplayName = (patient) => {
-    // Try to get name from different possible structures
     if (patient.user_details?.full_name) return patient.user_details.full_name;
     if (patient.full_name) return patient.full_name;
     if (patient.first_name && patient.last_name) return `${patient.first_name} ${patient.last_name}`;
@@ -217,6 +262,29 @@ const AppointmentForm = () => {
       return `${patient.user_details.first_name} ${patient.user_details.last_name}`;
     }
     return 'Unknown Patient';
+  };
+
+  const getProviderDisplayName = (provider) => {
+    const firstName = provider.first_name || '';
+    const lastName = provider.last_name || '';
+    const username = provider.username || '';
+    const userType = provider.user_type || '';
+    
+    let name = '';
+    if (firstName && lastName) {
+      name = `${firstName} ${lastName}`;
+    } else if (firstName) {
+      name = firstName;
+    } else if (username) {
+      name = username;
+    } else {
+      name = 'Unknown Provider';
+    }
+    
+    const title = userType === 'doctor' ? 'Dr. ' : '';
+    const specialization = provider.specialization ? ` (${provider.specialization})` : '';
+    
+    return `${title}${name}${specialization}`.trim();
   };
 
   if (loading) {
@@ -242,7 +310,6 @@ const AppointmentForm = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="bg-blue-600 p-3 rounded-full">
@@ -262,7 +329,6 @@ const AppointmentForm = () => {
           </p>
         </div>
 
-        {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4">
@@ -276,7 +342,6 @@ const AppointmentForm = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Appointment Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Appointment Type <span className="text-red-500">*</span>
@@ -300,7 +365,6 @@ const AppointmentForm = () => {
               </div>
             </div>
 
-            {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Appointment Title <span className="text-red-500">*</span>
@@ -316,7 +380,6 @@ const AppointmentForm = () => {
               />
             </div>
 
-            {/* Reason for Visit */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Reason for Visit
@@ -331,7 +394,6 @@ const AppointmentForm = () => {
               />
             </div>
 
-            {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Additional Details
@@ -346,7 +408,6 @@ const AppointmentForm = () => {
               />
             </div>
 
-            {/* Patient Selection (Staff only) */}
             {isStaff && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -363,7 +424,7 @@ const AppointmentForm = () => {
                   <option value="">Choose a patient...</option>
                   {Array.isArray(patients) && patients.map(patient => (
                     <option key={patient.id} value={patient.id}>
-                      {getPatientDisplayName(patient)} {patient.date_of_birth ? `- DOB: ${new Date(patient.date_of_birth).toLocaleDateString()}` : ''}
+                      {getPatientDisplayName(patient)}
                     </option>
                   ))}
                 </select>
@@ -371,7 +432,6 @@ const AppointmentForm = () => {
               </div>
             )}
 
-            {/* Provider Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Healthcare Provider <span className="text-red-500">*</span>
@@ -387,14 +447,13 @@ const AppointmentForm = () => {
                 <option value="">Choose a provider...</option>
                 {Array.isArray(providers) && providers.map(provider => (
                   <option key={provider.id} value={provider.id}>
-                    Dr. {provider.first_name} {provider.last_name} {provider.specialization && `- ${provider.specialization}`}
+                    {getProviderDisplayName(provider)}
                   </option>
                 ))}
               </select>
               {loadingProviders && <p className="text-xs text-gray-500 mt-1">Loading providers...</p>}
             </div>
 
-            {/* Date & Time */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Preferred Date & Time <span className="text-red-500">*</span>
@@ -408,13 +467,9 @@ const AppointmentForm = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1 flex items-center">
-                <span className="mr-1">⏰</span>
-                Your preferred time. The provider may suggest alternative times.
-              </p>
+              <p className="text-xs text-gray-500 mt-1">Your preferred time. The provider may suggest alternative times.</p>
             </div>
 
-            {/* Duration */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Estimated Duration
@@ -434,40 +489,6 @@ const AppointmentForm = () => {
               </select>
             </div>
 
-            {/* Location/Virtual Toggle */}
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="is_virtual"
-                  id="is_virtual"
-                  checked={formData.is_virtual}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="is_virtual" className="ml-2 block text-sm text-gray-700">
-                  This is a virtual/telehealth appointment
-                </label>
-              </div>
-
-              {!formData.is_virtual && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Location / Room
-                  </label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                    placeholder="e.g., Main Clinic, Room 123"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Information Box */}
             <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
               <div className="flex items-start">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
@@ -484,7 +505,6 @@ const AppointmentForm = () => {
               </div>
             </div>
 
-            {/* Submit Buttons */}
             <div className="flex justify-between pt-6 border-t border-gray-200">
               <button
                 type="button"
